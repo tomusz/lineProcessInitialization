@@ -2,6 +2,9 @@ package Application.AppMain;
 
 import Application.objects.PlantLine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class App {
 
     public static void main(String[] args) {
@@ -10,13 +13,17 @@ public class App {
         int amountOfWorkers = 1100;
 
         PlantLine plantLine = new PlantLine(amountOfPLC);
-        System.out.println("Total amount of PLC " + plantLine.getTotalAmountOfPLCs());
-//        System.out.println("Amount of PLC in state INITIAL MODE is : " + plantLine.getAmountOfPLCInStatus(PLCState.INITIAL_MODE));
+        System.out.println("Total amount of Programmable Logic Controllers " + plantLine.getTotalAmountOfPLCs());
+        plantLine.getAmountOfPLCByState();
         plantLine.initializePlant(amountOfWorkers);
-//        System.out.println("Amount of PLC in state RUN MODE is : " + plantLine.getAmountOfPLCInStatus(PLCState.RUN_MODE));
-//        System.out.println("Amount of PLC in state PROGRAM MODE is : " + plantLine.getAmountOfPLCInStatus(PLCState.PROGRAM_MODE));
-//        System.out.println("Amount of PLC in state INITIAL MODE is : " + plantLine.getAmountOfPLCInStatus(PLCState.INITIAL_MODE));
-        System.out.println(plantLine.getTotalAmountOfPLCs());
+
+//      Initialization with validation
+        List<Integer> iterationNumbersForValidation = new ArrayList<>();
+        iterationNumbersForValidation.add(1);
+        iterationNumbersForValidation.add(2);
+        iterationNumbersForValidation.add(3);
+        iterationNumbersForValidation.add(1100);
+        plantLine.initializePlantAndPrintStatesForIterationsInList(amountOfWorkers,iterationNumbersForValidation);
     }
 
 }

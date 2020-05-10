@@ -40,34 +40,37 @@ public class PlantLine {
         return prefix + amountOfInitial + amountOfProgram + amountOfRun;
     }
 
-    private String getAmountOfPLCByState() {
+    public void getAmountOfPLCByState() {
         String prefix = "Amount of Programmable Logic Controllers are: \n";
         String amountOfInitial = "initial state: " + getAmountOfPLCInStatus(PLCState.INITIAL_MODE) + "\n";
         String amountOfRun = "run state: " + getAmountOfPLCInStatus(PLCState.RUN_MODE) + "\n";
         String amountOfProgram = "program state: " + getAmountOfPLCInStatus(PLCState.PROGRAM_MODE) + "\n";
-        return prefix + amountOfInitial + amountOfProgram + amountOfRun;
+        System.out.println((prefix + amountOfInitial + amountOfProgram + amountOfRun));
     }
 
     public int getTotalAmountOfPLCs() {
         return amountOfPLCs;
     }
 
+    /**
+     * @param amountOfWorkers - amount of workers for performing initialization
+     *
+     *                        perform basic initialization of Programmable Logic Controllers
+     */
     public void initializePlant(int amountOfWorkers) {
         for (int i = 1; i < amountOfWorkers + 1; i++) {
             iterateAllPLCAndChangeStateIfMeetRequirements(i);
-            //lines for testing states on iterations
-            /*if (i == 1) {
-                System.out.println(getAmountOfPLCByState(i));
-            } else if (i == 2) {
-                System.out.println(getAmountOfPLCByState(i));
-            } else if (i == 3) {
-                System.out.println(getAmountOfPLCByState(i));
-            } else if (i == 1100) {
-                System.out.println(getAmountOfPLCByState(i));
-            }*/
         }
     }
 
+    /**
+     * @param amountOfWorkers - amount of workers for performing initialization
+     * @param iterationsList - iteration that would be listed during the process of
+     *                       Programmable Logic Controllers initialization
+     *
+     *   Additionally to base initialization function prints all Programmable Logic Controllers
+     *   states in console result for each iteration number in list
+     */
     public void initializePlantAndPrintStatesForIterationsInList(int amountOfWorkers,
                                                                  List<Integer> iterationsList) {
         for (int i = 1; i < amountOfWorkers + 1; i++) {
@@ -110,6 +113,10 @@ public class PlantLine {
         }
     }
 
+    /**
+     * @param stateOfPLC - enum value before status change
+     * @return - returns value of new Programmable Logic Controller state
+     */
     private String getStatusAfterSecondWorker(PLCState stateOfPLC) {
         if (stateOfPLC.equals(PLCState.PROGRAM_MODE)) {
             return "RUN";
