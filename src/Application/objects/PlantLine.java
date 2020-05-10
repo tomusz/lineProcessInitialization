@@ -15,7 +15,7 @@ public class PlantLine {
 
     private List<ProgrammableLogicController> setPLCInDefaultState(int amountOfPLCs) {
         List<ProgrammableLogicController> list = new ArrayList<>();
-        for (int i = 1;i<amountOfPLCs+1;i++) {
+        for (int i = 1; i < amountOfPLCs + 1; i++) {
             ProgrammableLogicController tempPLC = new ProgrammableLogicController(i);
             list.add(tempPLC);
         }
@@ -24,7 +24,7 @@ public class PlantLine {
 
     public int getAmountOfPLCInStatus(PLCState stateOfPLC) {
         int amountOfPLCInState = 0;
-        for(ProgrammableLogicController programmableLogicController : pLCList) {
+        for (ProgrammableLogicController programmableLogicController : pLCList) {
             if (programmableLogicController.getState().equals(stateOfPLC)) {
                 amountOfPLCInState++;
             }
@@ -32,26 +32,31 @@ public class PlantLine {
         return amountOfPLCInState;
     }
 
-    public String getAmountOfPLCByState(int iteration) {
-        String prefix = "Amount of iteration NO " + iteration + " PLC are: \n";
+    private String getAmountOfPLCByState(int iteration) {
+        String prefix = "Amount of Programmable Logic Controllers iteration NO " + iteration + " PLC are: \n";
         String amountOfInitial = "initial state: " + getAmountOfPLCInStatus(PLCState.INITIAL_MODE) + "\n";
         String amountOfRun = "run state: " + getAmountOfPLCInStatus(PLCState.RUN_MODE) + "\n";
         String amountOfProgram = "program state: " + getAmountOfPLCInStatus(PLCState.PROGRAM_MODE) + "\n";
         return prefix + amountOfInitial + amountOfProgram + amountOfRun;
     }
 
-    public int getAmountOfPLCs() {
+    private String getAmountOfPLCByState() {
+        String prefix = "Amount of Programmable Logic Controllers are: \n";
+        String amountOfInitial = "initial state: " + getAmountOfPLCInStatus(PLCState.INITIAL_MODE) + "\n";
+        String amountOfRun = "run state: " + getAmountOfPLCInStatus(PLCState.RUN_MODE) + "\n";
+        String amountOfProgram = "program state: " + getAmountOfPLCInStatus(PLCState.PROGRAM_MODE) + "\n";
+        return prefix + amountOfInitial + amountOfProgram + amountOfRun;
+    }
+
+    public int getTotalAmountOfPLCs() {
         return amountOfPLCs;
     }
 
     public void initializePlant(int amountOfWorkers) {
-        for(int i = 1; i<amountOfWorkers+1;i++) {
-            for (ProgrammableLogicController programmableLogicController : pLCList) {
-                if (meetRequirementsForStateChange(i, programmableLogicController.getpLCNumber())) {
-                    programmableLogicController.changeState(getProperNewStatusName(i, programmableLogicController.getState()));
-                }
-            }
-            if (i == 1) {
+        for (int i = 1; i < amountOfWorkers + 1; i++) {
+            iterateAllPLCAndChangeStateIfMeetRequirements(i);
+            //lines for testing states on iterations
+            /*if (i == 1) {
                 System.out.println(getAmountOfPLCByState(i));
             } else if (i == 2) {
                 System.out.println(getAmountOfPLCByState(i));
@@ -59,31 +64,56 @@ public class PlantLine {
                 System.out.println(getAmountOfPLCByState(i));
             } else if (i == 1100) {
                 System.out.println(getAmountOfPLCByState(i));
+            }*/
+        }
+    }
+
+    public void initializePlantAndPrintStatesForIterationsInList(int amountOfWorkers,
+                                                                 List<Integer> iterationsList) {
+        for (int i = 1; i < amountOfWorkers + 1; i++) {
+            iterateAllPLCAndChangeStateIfMeetRequirements(i);
+            printStatesOfPLCsForEachIterationInList(i, iterationsList);
+        }
+    }
+
+    private void iterateAllPLCAndChangeStateIfMeetRequirements(int iterationNO) {
+        for (ProgrammableLogicController programmableLogicController : pLCList) {
+            if (meetRequirementsForStateChange(iterationNO, programmableLogicController.getpLCNumber())) {
+                programmableLogicController.changeState(getNewStatusName(iterationNO, programmableLogicController.getState()));
+            }
+        }
+    }
+
+    private void printStatesOfPLCsForEachIterationInList(Integer iterationNO,
+                                                         List<Integer> iterationsList) {
+        for (Integer iterationFromList : iterationsList) {
+            if (iterationNO.equals(iterationFromList)) {
+                System.out.println(getAmountOfPLCByState(iterationNO));
             }
         }
     }
 
     private boolean meetRequirementsForStateChange(int workerNumber, int pLCNumber) {
-        return (pLCNumber%workerNumber) == 0;
+        return (pLCNumber % workerNumber) == 0;
     }
 
-    private String getProperNewStatusName(int workerNumber, PLCState plcState) {
+    private String getNewStatusName(int workerNumber, PLCState plcState) {
         if (workerNumber == 1) {
             return "RUN";
         } else if (workerNumber == 2) {
             return "PROGRAM";
         } else if (workerNumber >= 3) {
-            return logicForStatusChangeAfterSecondWorker(plcState);
+            return getStatusAfterSecondWorker(plcState);
         } else {
             throw new IllegalArgumentException("Worker number can not be less then 1, passed value is "
                     + workerNumber);
         }
     }
 
-    private String logicForStatusChangeAfterSecondWorker(PLCState stateOfPLC) {
+    private String getStatusAfterSecondWorker(PLCState stateOfPLC) {
         if (stateOfPLC.equals(PLCState.PROGRAM_MODE)) {
             return "RUN";
-        }else if (stateOfPLC.equals(PLCState.RUN_MODE)) {
+        } else if (stateOfPLC.equals(PLCState.RUN_MODE)) {
             return "PROGRAM";
         }
         throw new IllegalArgumentException("Mode of PLC can not be other then PROGRAM or RUN"
