@@ -1,29 +1,43 @@
 package Application.AppMain;
 
-import Application.objects.PlantLine;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class App {
 
     public static void main(String[] args) {
-
         int amountOfPLC = 1100;
         int amountOfWorkers = 1100;
-
-        PlantLine plantLine = new PlantLine(amountOfPLC);
-        System.out.println("Total amount of Programmable Logic Controllers " + plantLine.getTotalAmountOfPLCs());
-        plantLine.getAmountOfPLCByState();
-        plantLine.initializePlant(amountOfWorkers);
-
-//      Initialization with validation
-        List<Integer> iterationNumbersForValidation = new ArrayList<>();
-        iterationNumbersForValidation.add(1);
-        iterationNumbersForValidation.add(2);
-        iterationNumbersForValidation.add(3);
-        iterationNumbersForValidation.add(1100);
-        plantLine.initializePlantAndPrintStatesForIterationsInList(amountOfWorkers,iterationNumbersForValidation);
+        List<String> listOfProgrammableLogicControllerStatuses = new ArrayList<>();
+        for (int i=1;i<=amountOfWorkers;i++) {
+            for (int j=1;j<=amountOfPLC;j++) {
+                if (j%i==0) {
+                    if (i == 1) {
+                        listOfProgrammableLogicControllerStatuses.add("RUN");
+                    } else {
+                        listOfProgrammableLogicControllerStatuses.set(j-1,
+                                togglePLCStatus(listOfProgrammableLogicControllerStatuses.get(j-1)));
+                    }
+                }
+            }
+        }
+        printAmountOfPLCInStatusRun(listOfProgrammableLogicControllerStatuses);
+    }
+    private static String togglePLCStatus(String currentStatus) {
+        if (currentStatus.equals("RUN")){
+            return "PROGRAM";
+        } else {
+            return "RUN";
+        }
+    }
+    private static void printAmountOfPLCInStatusRun(List<String> PLCList) {
+        int counter = 0;
+        for (String plc : PLCList) {
+            if (plc.equals("RUN")) {
+                counter++;
+            }
+        }
+        System.out.println("Amount of Programmable Logic Controller in status RUN is " + counter);
     }
 
 }
